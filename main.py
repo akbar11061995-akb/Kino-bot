@@ -22,7 +22,7 @@ dp = Dispatcher()
 # 1. Majburiy obunaga qo'yiladigan kanallaringiz
 # (Kanal qo'shmoqchi bo'lsangiz shu yerga qo'shasiz
 CHANNELS = [
-    {"name": "Kanal11", "url": "https://t.me/kanalcha011", "id": 4476098717}
+    {"name": "Kanal11", "url": "https: t.me/kanalcha011", "id": "4476098717" }
 ]
 
 # Obunani va tugmalarni tekshiruvchi yordamchi funksiyalar
