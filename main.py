@@ -23,8 +23,7 @@ dp = Dispatcher()
 # (Kanal qo'shmoqchi bo'lsangiz shu yerga qo'shasiz)
 # ----------------------------------------------------
 CHANNELS = [
-    {"kanal1": "1-Kino Kanal", "@t.me/kanalcha011": "https://t.me/kanal_username1", "@t.me/kanalcha011": "@kanal_username1"},
-    {"kanal2": "2-Sponsor Kanal", "url": "https://t.me/kanal_username2", "id": "@kanal_username2"}
+    {"kanal1": "1-Kino Kanal", "@t.me/kanalcha011": "https://t.me/kanal_username1", "@t.me/kanalcha011": "@kanal_username1"
 ]
 
 # Obunani va tugmalarni tekshiruvchi yordamchi funksiyalar
