@@ -17,7 +17,34 @@ ADMIN_ID = int(os.getenv("ADMIN_ID", "123456789"))
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
+# 1. Obunani tekshirish uchun kerakli modullar (agar mavjud bo'lmasa)
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+# 2. Majburiy obunaga qo'yiladigan kanallaringiz
+CHANNELS = [
+    {"name": "1-Kino Kanal", "url": "https://t.me/kanal_username1", "id": "@kanal_username1"},
+    {"name": "2-Sponsor Kanal", "url": "https://t.me/kanal_username2", "id": "@kanal_username2"}
+]
+
+# 3. Obunani va tugmalarni tekshiruvchi yordamchi funksiyalar
+async def check_all_subscriptions(bot, user_id: int):
+    unsubscribed = []
+    for ch in CHANNELS:
+        try:
+            member = await bot.get_chat_member(chat_id=ch["id"], user_id=user_id)
+            if member.status in ["left", "kicked"]:
+                unsubscribed.append(ch)
+        except Exception:
+            unsubscribed.append(ch)
+    return unsubscribed
+
+def make_sub_keyboard(unsubscribed):
+    buttons = []
+    for ch in unsubscribed:
+        buttons.append([InlineKeyboardButton(text=f"📢 {ch['name']}", url=ch["url"])])
+    buttons.append([InlineKeyboardButton(text="✅ Tekshirish", callback_data="check_sub_again")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+        
 def init_db():
     conn = sqlite3.connect("movies.db")
     cursor = conn.cursor()
@@ -52,7 +79,13 @@ def get_movie(code):
 class AdminStates(StatesGroup):
     waiting_for_video = State()
     waiting_for_code = State()
-
+    # Obuna bo'lganini tekshiramiz
+    unsubscribed = await check_all_subscriptions(bot, message.from_user.id)
+    if unsubscribed:
+        kb = make_sub_keyboard(unsubscribed)
+        await message.answer("⚠️ **Kinolarni ko'rish uchun quyidagi kanallarga obuna bo'ling:**", reply_markup=kb, parse_mode="Markdown")
+        return
+    
 @dp.message(Command("start"))
 async def start_handler(message: Message):
     await message.answer(f"Salom {message.from_user.first_name}!\n\nKino kodini yuboring:")
@@ -115,3 +148,14 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+@dp.callback_query(lambda c: c.data == "check_sub_again")
+async def check_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    unsubscribed = await check_all_subscriptions(bot, user_id)
+
+    if unsubscribed:
+        await callback.answer("❌ Hali barcha kanallarga obuna bo'lmadingiz!", show_alert=True)
+    else:
+        await callback.message.delete()
+        await callback.message.answer("🎉 Rahmat! Endi kino kodini qaytadan yuborishingiz mumkin.")
+    
