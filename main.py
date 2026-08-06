@@ -21,9 +21,7 @@ dp = Dispatcher()
 # ----------------------------------------------------
 # 1. Majburiy obunaga qo'yiladigan kanallaringiz
 # (Kanal qo'shmoqchi bo'lsangiz shu yerga qo'shasiz
-CHANNELS = [
-    {"name": "Kanal11", "url": "https: t.me/kanalcha011", "id": "4476098717" }
-]
+CHANNELS =
 
 # Obunani va tugmalarni tekshiruvchi yordamchi funksiyalar
 async def check_all_subscriptions(bot: Bot, user_id: int):
